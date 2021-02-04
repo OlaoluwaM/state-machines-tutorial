@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import Modal from 'react-modal';
 
-function App() {
+import { useMachine } from 'react-robot';
+import { confirmationFlow } from './confirmationFlow';
+
+async function doSomethingCustom() {
+  // pretend to delete something
+  return new Promise((resolve, reject) => {
+    console.log('Beginning custom action...');
+    setTimeout(() => {
+      console.log('Done custom action');
+      reject('Oh no!');
+      resolve();
+    }, 1000);
+  });
+}
+
+export default function App() {
+  const [current, send] = useMachine(confirmationFlow);
+  const isLoading = current.name === 'loading';
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Modal Test</h1>
+      Current state: {current.name}
+      <button
+        onClick={() =>
+          send({
+            type: 'begin',
+            onCommit: () => doSomethingCustom(),
+          })
+        }>
+        Destroy Something Important
+      </button>
+      <Modal onRequestClose={() => send('cancel')} isOpen={current.name !== 'initial'}>
+        {current.context.error && <div>{current.context.error}</div>}
+        Are you sure?!
+        <button disabled={isLoading} onClick={() => send('cancel')}>
+          Cancel
+        </button>
+        <button disabled={isLoading} onClick={() => send('confirm')}>
+          Yes Definitely
+        </button>
+      </Modal>
     </div>
   );
 }
-
-export default App;

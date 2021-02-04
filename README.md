@@ -1,3 +1,9 @@
+# State Machines Intro
+
+A gentle intro into state machines. This is a simple react modal that makes use of the `robot3` npm package to model our applications using state machines.
+
+This was fun 😋
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
